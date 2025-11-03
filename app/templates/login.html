@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card" style="max-width:420px; margin:0 auto;">
+  <h2>Вход</h2>
+  <form method="post" action="{{ url_for('auth.login', next=request.args.get('next')) }}">
+    <div style="margin-bottom:8px;">
+      <label for="username">Логин</label><br/>
+      <input id="username" name="username" value="{{ username or '' }}" required style="width:100%; padding:8px; margin-top:4px;">
+    </div>
+    <div style="margin-bottom:8px;">
+      <label for="password">Пароль</label><br/>
+      <input id="password" name="password" type="password" required style="width:100%; padding:8px; margin-top:4px;">
+    </div>
+    <div style="margin-bottom:12px;">
+      <label>
+        <input type="checkbox" name="remember" {% if remember %}checked{% endif %}> Запомнить меня
+      </label>
+    </div>
+    <div style="display:flex; gap:8px; align-items:center;">
+      <button class="btn" type="submit">Войти</button>
+      <!-- Исправлено: теперь ведёт на books.index -->
+      <a href="{{ url_for('books.index') }}" class="btn-ghost">Отмена</a>
+    </div>
+  </form>
+
+  <p style="margin-top:10px; color:#666; font-size:0.9rem;">
+    Если логин/пароль неверны — вы увидите сообщение "Невозможно аутентифицироваться с указанными логином и паролем".
+  </p>
+</div>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <h2>{{ book['title'] }}</h2>
+  <div style="display:flex; gap:16px; align-items:flex-start;">
+    <div>
+      {% if book['cover'] %}
+        <img src="{{ url_for('static', filename=book['cover']) }}" alt="cover" style="max-width:200px; border-radius:6px;">
+      {% endif %}
+    </div>
+    <div>
+      <p><strong>Автор:</strong> {{ book['author'] }}</p>
+      <p><strong>Издатель:</strong> {{ book['publisher'] }}</p>
+      <p><strong>Год:</strong> {{ book['year'] }}</p>
+      <p><strong>Страниц:</strong> {{ book['pages'] }}</p>
+      <p><strong>Жанры:</strong> {{ book['genres'] or '—' }}</p>
+      <hr/>
+      <p>{{ book['short_description'] }}</p>
+    </div>
+  </div>
+
+  <h3 style="margin-top:18px;">Рецензии</h3>
+
+  {% if user_review %}
+    <div style="border:1px solid #eee; padding:10px; border-radius:6px; margin-bottom:12px;">
+      <strong>Ваша рецензия</strong>
+      <span class="muted">— {{ user_review['created_at'] }}</span>
+      {% if user_review.status and user_review.status != 'одобрена' %}
+        <div class="muted" style="margin-top:6px;">Статус: <strong>{{ user_review.status }}</strong></div>
+      {% endif %}
+      <div style="margin-top:8px;">{{ user_review['html']|safe }}</div>
+    </div>
+  {% else %}
+    {% if g.user_role in ['пользователь','модератор','админ'] %}
+      <div style="margin-bottom:12px;">
+        <a class="btn" href="{{ url_for('books.book_review_add', book_id=book['id']) }}">Написать рецензию</a>
+      </div>
+    {% endif %}
+  {% endif %}
+
+
+  {# Другие рецензии #}
+  {% if reviews %}
+    {% for r in reviews %}
+      <div style="border-top:1px solid #eee; padding:8px 0;">
+        <strong>{{ r['username'] or r['name'] }}</strong> <span class="muted">— {{ r['created_at'] }}</span><br/>
+        Оценка: {{ r['rating'] }}<br/>
+        <div style="margin-top:6px;">{{ r['html']|safe }}</div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p class="muted">Рецензий пока нет.</p>
+  {% endif %}
+</div>
+{% endblock %}

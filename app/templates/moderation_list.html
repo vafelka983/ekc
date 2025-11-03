@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <h2>Модерация рецензий — на рассмотрении</h2>
+  {% if reviews %}
+    <table>
+      <thead>
+        <tr>
+          <th>Книга</th>
+          <th>Пользователь</th>
+          <th>Добавлено</th>
+          <th>Действие</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in reviews %}
+          <tr>
+            <td><a href="{{ url_for('books.book_view', book_id=r.book_id) }}">{{ r.book_title }}</a></td>
+            <td>{{ r.name }} ({{ r.username }})</td>
+            <td class="muted">{{ r.created_at }}</td>
+            <td><a class="btn btn-small" href="{{ url_for('books.moderation_review', review_id=r.id) }}">Рассмотреть</a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div class="pagination" style="margin-top:12px;">
+      {% if page > 1 %}
+        <a class="btn btn-small" href="{{ url_for('books.moderation_list', page=page-1) }}">← Назад</a>
+      {% endif %}
+      <span class="muted">Страница {{ page }} из {{ total_pages }}</span>
+      {% if page < total_pages %}
+        <a class="btn btn-small" href="{{ url_for('books.moderation_list', page=page+1) }}">Вперед →</a>
+      {% endif %}
+    </div>
+
+  {% else %}
+    <p class="muted">Нет рецензий на рассмотрении.</p>
+  {% endif %}
+</div>
+{% endblock %}

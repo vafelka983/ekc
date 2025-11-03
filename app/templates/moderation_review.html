@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card" style="max-width:820px; margin:0 auto;">
+  <h2>Рецензия: {{ review.book_title }}</h2>
+  <p class="muted">Пользователь: {{ review.name }} ({{ review.username }}) — Добавлено: {{ review.created_at }}</p>
+  <p><strong>Оценка:</strong> {{ review.rating }}</p>
+  <div style="border:1px solid #eee; padding:12px; border-radius:6px;">
+    {{ review.html|safe }}
+  </div>
+
+  <form method="post" style="margin-top:12px; display:flex; gap:8px;">
+    <button name="action" value="approve" class="btn" type="submit">Одобрить</button>
+    <button name="action" value="reject" class="btn" type="submit" style="background:#e74c3c;">Отклонить</button>
+    <a class="btn-ghost" href="{{ url_for('books.moderation_list') }}">Назад</a>
+  </form>
+</div>
+{% endblock %}

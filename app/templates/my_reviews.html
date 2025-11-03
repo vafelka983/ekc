@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <h2>Мои рецензии</h2>
+  {% if reviews %}
+    <table>
+      <thead>
+        <tr>
+          <th>Книга</th>
+          <th>Оценка</th>
+          <th>Статус</th>
+          <th>Дата</th>
+          <th>Текст</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in reviews %}
+          <tr>
+            <td><a href="{{ url_for('books.book_view', book_id=r.book_id) }}">{{ r.book_title }}</a></td>
+            <td>{{ r.rating }}</td>
+            <td>{{ r.status }}</td>
+            <td class="muted">{{ r.created_at }}</td>
+            <td>{{ r.html|safe }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="muted">У вас ещё нет рецензий.</p>
+  {% endif %}
+</div>
+{% endblock %}

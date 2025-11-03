@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card" style="max-width:720px; margin:0 auto;">
+  <h2>Написать рецензию — {{ book['title'] }}</h2>
+
+  <form method="post" action="{{ url_for('books.book_review_add', book_id=book['id']) }}">
+    <div style="margin-bottom:10px;">
+      <label for="rating">Оценка</label><br/>
+      <select id="rating" name="rating" style="padding:8px; width:160px;">
+        <option value="5" selected>отлично</option>
+        <option value="4">хорошо</option>
+        <option value="3">удовлетворительно</option>
+        <option value="2">неудовлетворительно</option>
+        <option value="1">плохо</option>
+        <option value="0">ужасно</option>
+      </select>
+    </div>
+
+    <div style="margin-bottom:10px;">
+      <label for="text">Текст рецензии (поддерживается Markdown)</label><br/>
+      <textarea id="text" name="text" rows="10" required style="width:100%; padding:8px;">{{ form.text if form else '' }}</textarea>
+    </div>
+
+    <div style="display:flex; gap:8px;">
+      <button class="btn" type="submit">Сохранить</button>
+      <a class="btn-ghost" href="{{ url_for('books.book_view', book_id=book['id']) }}">Отмена</a>
+    </div>
+  </form>
+
+  <p class="muted" style="margin-top:10px;">Markdown формат: **жирный**, *курсив*, списки, ссылки и т.д.</p>
+</div>
+{% endblock %}
+

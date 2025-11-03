@@ -1,0 +1,625 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Электронная библиотека</title>
+<style>
+  :root {
+    --primary: #6366f1;
+    --primary-hover: #4f46e5;
+    --secondary: #64748b;
+    --success: #10b981;
+    --error: #ef4444;
+    --warning: #f59e0b;
+    --bg-dark: #0f172a;
+    --bg-card: #1e293b;
+    --bg-hover: #334155;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --border: #334155;
+    --border-light: #475569;
+    --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
+    --radius: 12px;
+    --radius-sm: 8px;
+    --transition: all 0.2s ease-in-out;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, var(--bg-dark) 0%, #1e293b 100%);
+    color: var(--text-primary);
+    font-size: 1rem;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  .navbar {
+    background: rgba(30, 41, 59, 0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .nav-left {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .nav-left a, .nav-left span {
+    color: var(--text-primary);
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition);
+    position: relative;
+  }
+
+  .nav-left a:hover {
+    color: var(--primary);
+    transform: translateY(-1px);
+  }
+
+  .nav-left a::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--primary);
+    transition: var(--transition);
+  }
+
+  .nav-left a:hover::after {
+    width: 100%;
+  }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+  }
+
+  .card {
+    background: var(--bg-card);
+    color: var(--text-primary);
+    padding: 2rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    backdrop-filter: blur(10px);
+    transition: var(--transition);
+  }
+
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.4);
+  }
+
+  footer {
+    margin-top: 3rem;
+    padding: 1.5rem 2rem;
+    text-align: center;
+    color: var(--text-secondary);
+    background: var(--bg-card);
+    border-top: 1px solid var(--border);
+    font-size: 0.9rem;
+  }
+
+  .btn {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+    background: linear-gradient(135deg, var(--primary-hover) 0%, #4338ca 100%);
+  }
+
+  .btn-ghost {
+    background: transparent;
+    border: 2px solid var(--border-light);
+    color: var(--text-secondary);
+    padding: 0.6rem 1.2rem;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    transition: var(--transition);
+  }
+
+  .btn-ghost:hover {
+    background: var(--bg-hover);
+    border-color: var(--primary);
+    color: var(--primary);
+    transform: translateY(-1px);
+  }
+
+  .btn-small {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    border-radius: var(--radius-sm);
+  }
+
+  .btn-danger {
+    background: linear-gradient(135deg, var(--error) 0%, #dc2626 100%);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+  }
+
+  .btn-danger:hover {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+  }
+
+  .flash {
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    border-radius: var(--radius-sm);
+    border-left: 4px solid;
+    animation: slideIn 0.3s ease-out;
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .flash.error {
+    background: rgba(239, 68, 68, 0.1);
+    color: #fca5a5;
+    border-left-color: var(--error);
+  }
+
+  .flash.success {
+    background: rgba(16, 185, 129, 0.1);
+    color: #6ee7b7;
+    border-left-color: var(--success);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    color: var(--text-primary);
+    background: var(--bg-card);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+  }
+
+  th {
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--primary);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    padding: 1rem;
+    text-align: left;
+  }
+
+  td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+
+  tr:hover {
+    background: rgba(99, 102, 241, 0.05);
+  }
+
+  .actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .cover-thumb {
+    width: 60px;
+    height: 80px;
+    border-radius: var(--radius-sm);
+    object-fit: cover;
+    transition: var(--transition);
+    border: 2px solid var(--border);
+  }
+
+  .cover-thumb:hover {
+    transform: scale(1.05);
+    border-color: var(--primary);
+  }
+
+  .pagination {
+    margin-top: 1.5rem;
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .muted {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  /* Поля ввода и формы */
+  form textarea, form input, select {
+    background: rgba(30, 41, 59, 0.8);
+    color: var(--text-primary);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem 1rem;
+    width: 100%;
+    transition: var(--transition);
+    font-family: inherit;
+  }
+
+  form textarea:focus, form input:focus, select:focus {
+    border-color: var(--primary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    background: rgba(30, 41, 59, 0.9);
+  }
+
+  form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  /* Модальное окно */
+  .modal-backdrop {
+    display: none;
+    position: fixed;
+    left: 0; top: 0; right: 0; bottom: 0;
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(8px);
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.2s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .modal {
+    background: var(--bg-card);
+    color: var(--text-primary);
+    padding: 2rem;
+    border-radius: var(--radius);
+    width: 90%;
+    max-width: 500px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    animation: scaleIn 0.2s ease-out;
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .modal h3 {
+    margin-top: 0;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+  }
+
+  .modal .buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+
+  a {
+    color: var(--primary);
+    text-decoration: none;
+    transition: var(--transition);
+  }
+
+  a:hover {
+    color: var(--primary-hover);
+  }
+
+  /* Стили для формы поиска */
+  .search-form {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(30, 41, 59, 0.8) 100%);
+    padding: 2rem;
+    border-radius: var(--radius);
+    margin-bottom: 2rem;
+    border: 1px solid var(--border);
+    backdrop-filter: blur(10px);
+  }
+
+  .search-form h3 {
+    margin-top: 0;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .search-form h3::before {
+    content: '🔍';
+    font-size: 1.1em;
+  }
+
+  .search-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .search-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .search-form input,
+  .search-form select {
+    background: rgba(30, 41, 59, 0.8);
+    color: var(--text-primary);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem 1rem;
+    width: 100%;
+    transition: var(--transition);
+  }
+
+  .search-form input:focus,
+  .search-form select:focus {
+    border-color: var(--primary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    background: rgba(30, 41, 59, 0.9);
+  }
+
+  .search-actions {
+    margin-top: 1.5rem;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  /* Адаптивность */
+  @media (max-width: 768px) {
+    .navbar {
+      padding: 1rem;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .nav-left {
+      flex-direction: column;
+      gap: 1rem;
+      text-align: center;
+    }
+
+    .container {
+      margin: 1rem auto;
+      padding: 0 1rem;
+    }
+
+    .card {
+      padding: 1.5rem;
+    }
+
+    .search-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .actions {
+      flex-direction: column;
+    }
+
+    table {
+      display: block;
+      overflow-x: auto;
+    }
+  }
+
+  /* Дополнительные улучшения */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .stat-card {
+    background: var(--bg-card);
+    padding: 1.5rem;
+    border-radius: var(--radius);
+    text-align: center;
+    border: 1px solid var(--border);
+  }
+
+  .stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary);
+    display: block;
+  }
+
+  .stat-label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+  }
+</style>
+
+</head>
+<body>
+  <div class="navbar">
+    <div class="nav-left">
+      <a href="{{ url_for('books.index') }}" style="font-size:1.25rem; font-weight:700;">📚 Электронная библиотека</a>
+      <a href="{{ url_for('books.index') }}">📖 Книги</a>
+      {% if session.get('user_id') and g.user_role == 'пользователь' %}
+        <a href="{{ url_for('books.my_reviews') }}">✍️ Мои рецензии</a>
+      {% endif %}
+
+      {% if session.get('user_id') and g.user_role == 'модератор' %}
+        <a href="{{ url_for('books.moderation_list') }}">🛡️ Модерация рецензий</a>
+      {% endif %}
+    </div>
+    <div class="nav-right">
+      {% if session.get('user_id') %}
+        <span>👤 {{ session.get('full_name') }}</span>
+        <a class="btn-ghost" href="{{ url_for('auth.logout') }}">🚪 Выйти</a>
+      {% else %}
+        <a class="btn" href="{{ url_for('auth.login') }}">🔐 Войти</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, msg in messages %}
+          <div class="flash {{ 'error' if category=='error' else ('success' if category=='success' else '') }}">{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </div>
+
+  <footer>
+    Группа: <strong>231-352</strong> — ФИО: <strong>Гуров Арсений Эрнестович</strong><br/>
+    <span class="muted">Электронная библиотека © 2024</span>
+  </footer>
+
+  <!-- Модальное окно подтверждения удаления -->
+  <div id="modalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true">
+    <div class="modal" id="modalContent">
+      <h3 id="modalTitle">🗑️ Удаление книги</h3>
+      <p id="modalMessage">Вы уверены, что хотите удалить книгу?</p>
+      <div class="buttons">
+        <button class="btn-ghost" id="modalNo">❌ Нет</button>
+        <!-- форма для отправки POST на удаление (action устанавливается JS) -->
+        <form method="post" id="deleteForm" style="display:inline;">
+          <button type="submit" class="btn btn-danger" style="background:#e74c3c;">✅ Да</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // Модальное окно подтверждения удаления: связываем с формой внутри модала
+  (function(){
+    var backdrop = document.getElementById('modalBackdrop');
+    var msg = document.getElementById('modalMessage');
+    var modalNo = document.getElementById('modalNo');
+    var deleteFormModal = document.getElementById('deleteForm'); // форма внутри модала
+    var currentFormToSubmit = null;
+
+    if (!backdrop || !msg || !modalNo || !deleteFormModal) {
+      // Если какой-то элемент отсутствует — ничего не делаем
+      console.warn('Modal elements not found; delete confirmation disabled.');
+      return;
+    }
+
+    // Функция открытия модала для конкретной формы (DOM element)
+    function openModalForForm(formElem) {
+      // Берём название книги из скрытого поля (или data-атрибута)
+      var titleInput = formElem.querySelector('input[name="book_title"]');
+      var title = titleInput ? titleInput.value : 'эту книгу';
+      msg.textContent = 'Вы уверены, что хотите удалить книгу «' + title + '»?';
+      // Устанавливаем action модальной формы на action исходной формы
+      deleteFormModal.action = formElem.action;
+      // Сохраняем ссылку, чтобы при подтверждении можно было отправить исходную форму (если нужно)
+      currentFormToSubmit = formElem;
+      // Показываем модал
+      backdrop.style.display = 'flex';
+    }
+
+    // Перехватываем submit всех .delete-form
+    var forms = document.querySelectorAll('.delete-form');
+    forms.forEach(function(f){
+      f.addEventListener('submit', function(e){
+        e.preventDefault(); // остановим обычную отправку
+        openModalForForm(f);
+      });
+    });
+
+    // Нажатие "Нет" — просто закрываем
+    modalNo.addEventListener('click', function(){
+      backdrop.style.display = 'none';
+      currentFormToSubmit = null;
+    });
+
+    // Если клик за пределами модального окна — закрыть
+    backdrop.addEventListener('click', function(e){
+      if (e.target === backdrop) {
+        backdrop.style.display = 'none';
+        currentFormToSubmit = null;
+      }
+    });
+
+    // Когда пользователь нажимает "Да" — отправляем модальную форму (которая имеет тот же action)
+    // deleteFormModal находится в DOM (в вашем base.html) и содержит submit кнопку.
+    deleteFormModal.addEventListener('submit', function(e){
+      // По умолчанию форма отправится на сервер — оставляем это поведение.
+      // Можно дополнительно синхронизировать с оригинальной формой, но это избыточно.
+      backdrop.style.display = 'none';
+    });
+  })();
+</script>
+
+</body>
+</html>

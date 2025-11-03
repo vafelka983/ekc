@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <h2>Список книг</h2>
+
+  <!-- Форма поиска -->
+  <div style="margin-bottom: 20px; padding: 16px; background: #444; border-radius: 6px;">
+    <h3 style="margin-top: 0;">Поиск книг</h3>
+    <form method="get" action="{{ url_for('books.index') }}">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <!-- Название -->
+        <div>
+          <label>Название</label>
+          <input type="text" name="title" value="{{ filters.title }}"
+                 placeholder="Часть названия..." style="width: 100%; padding: 6px;">
+        </div>
+
+        <!-- Автор -->
+        <div>
+          <label>Автор</label>
+          <input type="text" name="author" value="{{ filters.author }}"
+                 placeholder="Часть имени автора..." style="width: 100%; padding: 6px;">
+        </div>
+
+        <!-- Жанры -->
+        <div>
+          <label>Жанры</label>
+          <select name="genres" multiple style="width: 100%; padding: 6px; height: 100px;">
+            {% for genre in genres_all %}
+              <option value="{{ genre.id }}"
+                {% if genre.id|string in filters.genres %}selected{% endif %}>
+                {{ genre.name }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Годы -->
+        <div>
+          <label>Год издания</label>
+          <select name="years" multiple style="width: 100%; padding: 6px; height: 100px;">
+            {% for year in years %}
+              <option value="{{ year.year }}"
+                {% if year.year|string in filters.years %}selected{% endif %}>
+                {{ year.year }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Объём страниц -->
+        <div>
+          <label>Объём страниц</label>
+          <div style="display: flex; gap: 8px;">
+            <input type="number" name="pages_min" value="{{ filters.pages_min }}"
+                   placeholder="От" style="flex: 1; padding: 6px;" min="0">
+            <input type="number" name="pages_max" value="{{ filters.pages_max }}"
+                   placeholder="До" style="flex: 1; padding: 6px;" min="0">
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top: 12px; display: flex; gap: 8px; align-items: center;">
+        <button type="submit" class="btn">Найти</button>
+        <a href="{{ url_for('books.index') }}" class="btn-ghost">Сбросить</a>
+        {% if filters.title or filters.author or filters.genres or filters.years or filters.pages_min or filters.pages_max %}
+          <span class="muted">Найдено книг: {{ books|length }}</span>
+        {% endif %}
+      </div>
+    </form>
+  </div>
+
+  <p class="muted">Отсортировано по году (сначала новые). На странице не более 10 книг.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Обложка</th>
+        <th>Название / Жанры</th>
+        <th>Год</th>
+        <th>Автор</th>
+        <th>Страниц</th>
+        <th>Средний рейтинг</th>
+        <th>Рецензии</th>
+        <th>Действия</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for b in books %}
+        <tr>
+          <td>
+            {% if b['cover'] %}
+              <img class="cover-thumb" src="{{ url_for('static', filename=b['cover']) }}" alt="cover">
+            {% else %}
+              <div style="width:72px;height:100px;background:#444;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#888;">Нет</div>
+            {% endif %}
+          </td>
+          <td>
+            <strong>{{ b['title'] }}</strong><br/>
+            <span class="muted">{{ b['genres'] or '—' }}</span>
+          </td>
+          <td>{{ b['year'] }}</td>
+          <td>{{ b['author'] }}</td>
+          <td>{{ b['pages'] }}</td>
+          <td>{{ "%.2f"|format(b['avg_rating'] or 0) }}</td>
+          <td>{{ b['review_count'] or 0 }}</td>
+          <td>
+          <div class="actions">
+            <a class="btn btn-small" href="{{ url_for('books.book_view', book_id=b['id']) }}">Просмотр</a>
+
+            {% if g.user_role in ['админ','модератор'] %}
+              <a class="btn btn-small" href="{{ url_for('books.book_edit', book_id=b['id']) }}" title="Редактировать">Редактировать</a>
+            {% endif %}
+
+            {% if g.user_role == 'админ' %}
+              <form method="post" action="{{ url_for('books.book_delete', book_id=b['id']) }}" class="delete-form" style="display:inline;">
+                <input type="hidden" name="book_title" value="{{ b['title'] }}">
+                <button type="submit" class="btn btn-small" style="background:#e74c3c;">Удалить</button>
+              </form>
+            {% endif %}
+          </div>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="pagination">
+    {% if page > 1 %}
+      <a class="btn btn-small" href="{{ url_for('books.index', page=page-1, **request.args) }}">← Назад</a>
+    {% endif %}
+    <span class="muted">Страница {{ page }} из {{ total_pages }}</span>
+    {% if page < total_pages %}
+      <a class="btn btn-small" href="{{ url_for('books.index', page=page+1, **request.args) }}">Вперед →</a>
+    {% endif %}
+  </div>
+
+  {% if g.user_role == 'админ' %}
+    <div style="margin-top:12px;">
+      <a class="btn" href="{{ url_for('books.book_add') }}" title="Добавление книги">Добавить книгу</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
